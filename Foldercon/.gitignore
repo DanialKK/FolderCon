@@ -1,0 +1,63 @@
+# Python __pycache__ and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+db.sqlite3-journal
+
+# Django media and static files (if generated locally)
+media/
+staticfiles/
+static_root/
+media_root/
+
+# VS Code settings
+.vscode/
+
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# dotenv and secrets
+.env
+.env.*
+
+# pipenv
+Pipfile.lock
+
+# migrations (optional: remove if you want to track migrations)
+**/migrations/*.pyc
+**/migrations/__pycache__/
+# Uncomment next line if you don't want to track any migration files
+# **/migrations/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/

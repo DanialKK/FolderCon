@@ -1,0 +1,159 @@
+{% load static %}
+
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>FolderCon</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r p-4 flex flex-col justify-between h-screen">
+        <form method="get">
+            <input type="hidden" name="q" value="{{ query }}">
+            <div class="space-y-4">
+                <div>
+                    <a href="/" class="text-sm text-gray-500 hover:text-black">All</a>
+                </div>
+                {% for type in types %}
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            {% if type.ico %}
+                                <img src="{{ type.ico.url }}" alt="{{ type.title }}" class="w-5 h-5">
+                            {% endif %}
+                            <h3>
+                                <a href="?type={{ type.id }}"
+                                   class="text-black font-bold hover:underline {% if selected_type == type.id %}underline{% endif %}">
+                                    {{ type.title }}
+                                </a>
+                            </h3>
+                        </div>
+                        <ul class="ml-4 mt-2 space-y-1 {% if selected_type != type.id %}hidden{% endif %}" id="cat-{{ type.id }}">
+                            {% for category in type.categories.all %}
+                                <li>
+                                    <a href="?type={{ type.id }}&category={{ category.id }}"
+                                       class="block text-sm px-2 py-1 rounded hover:bg-blue-100
+                                              {% if selected_category == category.id %}bg-blue-200{% endif %}">
+                                        {{ category.title }}
+                                    </a>
+                                </li>
+                            {% empty %}
+                                <li class="text-sm text-gray-500">No categories</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+        </form>
+
+        <!-- Social Links -->
+        <div class="mt-8 flex justify-center space-x-6">
+            <!-- Twitter -->
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0012 8v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                </svg>
+            </a>
+
+            <!-- YouTube -->
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 15l5.2-3L10 9v6zm11.8-7s-.2-1.4-.8-2.1c-.8-.8-1.6-.8-2.1-.9C15.4 5 12 5 12 5s-3.4 0-6.9.1c-.5 0-1.3.1-2.1.9-.6.7-.8 2.1-.8 2.1S2 9.6 2 11.1v1.8c0 1.5.2 3.1.2 3.1s.2 1.4.8 2.1c.8.8 1.8.8 2.3.9 1.6.1 6.9.1 6.9.1s3.4 0 6.9-.1c.5 0 1.3-.1 2.1-.9.6-.7.8-2.1.8-2.1s.2-1.5.2-3.1v-1.8c0-1.5-.2-3.1-.2-3.1z"/>
+                </svg>
+            </a>
+
+            <!-- Facebook -->
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.12 8.44 9.88v-6.99H7.9v-2.89h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.25c-1.23 0-1.62.77-1.62 1.56v1.87h2.77l-.44 2.89h-2.33v6.99C18.34 21.12 22 16.99 22 12z" />
+                </svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between flex-wrap gap-4 mb-6 border-b pb-4 border-gray-300">
+            <h1 class="text-3xl font-bold text-gray-800">FolderCon</h1>
+
+            <!-- Search Button -->
+            <div class="fixed top-4 right-4 z-50">
+                <div class="relative group">
+                    <button id="search-toggle"
+                            class="bg-gray-800 text-white p-2 rounded transition-colors duration-200 hover:text-blue-500 focus:outline-none">
+                        <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor"
+                             viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 01-1.414 1.415l-4.386-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+
+                    <!-- Search Form -->
+                    <form method="get"
+                          id="search-form"
+                          class="absolute right-0 top-0 translate-x-full opacity-0 pointer-events-none transition-all duration-300 ease-in-out flex items-center bg-white border border-gray-300 rounded px-2 py-1.5 shadow-lg">
+                        <input type="hidden" name="type" value="{{ selected_type }}">
+                        <input type="hidden" name="category" value="{{ selected_category }}">
+                        <svg class="h-4 w-4 text-blue-600 mr-2" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                             viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.386a1 1 0 01-1.414 1.415l-4.386-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                        <input type="text" name="q" placeholder="Search..." class="focus:outline-none w-48 text-sm text-gray-800">
+                        <button type="submit" class="ml-2 text-blue-600 hover:text-blue-800">Go!</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Folder Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for folder in foldercons %}
+                <div class="bg-white rounded shadow p-4">
+                    {% if folder.webp %}
+                        <img src="{{ folder.webp.url }}" alt="{{ folder.title }}" class="w-full h-40 object-cover rounded">
+                    {% elif folder.png %}
+                        <img src="{{ folder.png.url }}" alt="{{ folder.title }}" class="w-full h-40 object-cover rounded">
+                    {% elif folder.ico %}
+                        <img src="{{ folder.ico.url }}" alt="{{ folder.title }}" class="w-full h-40 object-cover rounded">
+                    {% else %}
+                        <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-600 rounded">
+                            No Image
+                        </div>
+                    {% endif %}
+
+                    <div class="mt-4 font-bold text-lg">{{ folder.title }}</div>
+                    <div class="text-sm text-gray-600">Category: {{ folder.category.title }}</div>
+
+                    <div class="mt-2 space-y-1 text-sm">
+                        {% if folder.ico %}
+                            <a href="{{ folder.ico.url }}" download class="text-blue-600 hover:underline">Download .ico</a>
+                        {% endif %}
+                        {% if folder.png %}
+                            <a href="{{ folder.png.url }}" download class="text-blue-600 hover:underline">Download .png</a>
+                        {% endif %}
+                        {% if folder.icns %}
+                            <a href="{{ folder.icns.url }}" download class="text-blue-600 hover:underline">Download For Mac</a>
+                        {% endif %}
+                        {% if folder.zip %}
+                            <a href="{{ folder.zip.url }}" download class="text-blue-600 hover:underline">Download For Windows</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-gray-700">Not found! Do you want to request it for us or add it yourself?</p>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+
+<!-- JavaScript -->
+<script src="{% static 'js/foldercon_main.js' %}"></script>
+
+</body>
+</html>

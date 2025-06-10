@@ -3,15 +3,16 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>FolderCon</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
 
-<div class="flex min-h-screen">
+<div class="flex flex-col md:flex-row min-h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r p-4 flex flex-col justify-between h-screen">
-        <form method="get">
+    <aside class="w-full md:fixed md:w-64 md:h-screen md:top-0 md:left-0 bg-white border-b md:border-r p-4 flex flex-col justify-between">
+        <form method="get" ز>
             <input type="hidden" name="q" value="{{ query }}">
             <div class="space-y-4">
                 <div>
@@ -50,12 +51,18 @@
 
         <!-- Social Links -->
         <div class="mt-8 flex justify-center space-x-6">
-            <!-- Twitter -->
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0012 8v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+            <!--  X -->
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
             </a>
+
+
+
+
+
 
             <!-- YouTube -->
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-red-600">
@@ -74,7 +81,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 md:ml-64 mt-4 md:mt-0">
         <!-- Header -->
         <div class="flex items-center justify-between flex-wrap gap-4 mb-6 border-b pb-4 border-gray-300">
             <h1 class="text-3xl font-bold text-gray-800">FolderCon</h1>
@@ -96,8 +103,8 @@
                     <form method="get"
                           id="search-form"
                           class="absolute right-0 top-0 translate-x-full opacity-0 pointer-events-none transition-all duration-300 ease-in-out flex items-center bg-white border border-gray-300 rounded px-2 py-1.5 shadow-lg">
-                        <input type="hidden" name="type" value="{{ selected_type }}">
-                        <input type="hidden" name="category" value="{{ selected_category }}">
+<!--                        <input type="hidden" name="type" value="{{ selected_type }}">-->
+<!--                        <input type="hidden" name="category" value="{{ selected_category }}">-->
                         <svg class="h-4 w-4 text-blue-600 mr-2" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                              viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
@@ -111,49 +118,40 @@
             </div>
         </div>
 
-        <!-- Folder Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for folder in foldercons %}
-                <div class="bg-white rounded shadow p-4">
-                    {% if folder.webp %}
-                        <img src="{{ folder.webp.url }}" alt="{{ folder.title }}" class="w-full h-40 object-cover rounded">
-                    {% elif folder.png %}
-                        <img src="{{ folder.png.url }}" alt="{{ folder.title }}" class="w-full h-40 object-cover rounded">
-                    {% elif folder.ico %}
-                        <img src="{{ folder.ico.url }}" alt="{{ folder.title }}" class="w-full h-40 object-cover rounded">
-                    {% else %}
-                        <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-600 rounded">
-                            No Image
-                        </div>
-                    {% endif %}
-
-                    <div class="mt-4 font-bold text-lg">{{ folder.title }}</div>
-                    <div class="text-sm text-gray-600">Category: {{ folder.category.title }}</div>
-
-                    <div class="mt-2 space-y-1 text-sm">
-                        {% if folder.ico %}
-                            <a href="{{ folder.ico.url }}" download class="text-blue-600 hover:underline">Download .ico</a>
-                        {% endif %}
-                        {% if folder.png %}
-                            <a href="{{ folder.png.url }}" download class="text-blue-600 hover:underline">Download .png</a>
-                        {% endif %}
-                        {% if folder.icns %}
-                            <a href="{{ folder.icns.url }}" download class="text-blue-600 hover:underline">Download For Mac</a>
-                        {% endif %}
-                        {% if folder.zip %}
-                            <a href="{{ folder.zip.url }}" download class="text-blue-600 hover:underline">Download For Windows</a>
-                        {% endif %}
-                    </div>
+        <!-- Folder Cards customize -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for folder in foldercons %}
+        <div class="relative group w-full aspect-[4/3] overflow-hidden rounded-lg">
+            {% if folder.webp %}
+                <img src="{{ folder.webp.url }}" alt="{{ folder.title }}"
+                     class="w-full h-full object-cover transition-all duration-300 group-hover:brightness-50" />
+            {% elif folder.png %}
+                <img src="{{ folder.png.url }}" alt="{{ folder.title }}"
+                     class="w-full h-full object-cover transition-all duration-300 group-hover:brightness-50" />
+            {% else %}
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600">
+                    No Image
                 </div>
-            {% empty %}
-                <p class="text-gray-700">Not found! Do you want to request it for us or add it yourself?</p>
-            {% endfor %}
+            {% endif %}
+
+            <!-- hover -->
+            <div class="absolute inset-0 bg-black hover:bg-opacity-50 text-black font-mono text-xs sm:text-sm grid grid-rows-3 grid-cols-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 class="col-span-2 text-white font-bold border-b border-white flex items-center justify-center text-center font-mono text-base">{{ folder.title }}</h3>
+                    <a href="{{ folder.ico.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-r border-white hover:bg-black">.ico</a>
+                    <a href="{{ folder.png.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-b border-white hover:bg-black">.png</a>
+                    <a href="{{ folder.icns.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-t border-white hover:bg-black">.icns</a>
+                    <a href="{{ folder.zip.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-l border-white  hover:bg-black">.rar</a>
+            </div>
+
         </div>
+                {% empty %}
+                <p class="text-gray-700">Not found! Do you want to request it for us or add it yourself?</p>
+                {% endfor %}
+    </div>
     </main>
-</div>
 
 <!-- JavaScript -->
 <script src="{% static 'js/foldercon_main.js' %}"></script>
-
+</div>
 </body>
 </html>

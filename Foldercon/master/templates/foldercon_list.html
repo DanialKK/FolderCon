@@ -162,7 +162,7 @@
 <!-- Modal -->
 <div id="warning-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white rounded-lg max-w-md w-full p-6 relative">
-    <h2 class="text-xl font-bold mb-4" id="modal-title">Report Issue</h2>
+    <h2 class="text-red-500 text-xl font-bold mb-4" id="modal-title">Report Issue</h2>
     <form id="warning-form">
         {% csrf_token %}
       <input type="hidden" name="report_file_id" id="report-file-id" />
@@ -172,7 +172,7 @@
       <textarea name="issue_text" id="warning-text" class="w-full border p-2 rounded" rows="5"></textarea>
       <div class="mt-4 flex justify-end gap-4">
         <button type="button" id="modal-close" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Nevermind</button>
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">send</button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Send</button>
       </div>
     </form>
   </div>

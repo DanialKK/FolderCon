@@ -30,7 +30,7 @@ class FolderContentAdmin(admin.ModelAdmin):
     list_filter = ('category',)
     search_fields = ('title',)
 class ReportFileAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+    list_display = ('title', 'foldercon')
     list_filter = ('foldercon',)
     search_fields = ('title', 'issue_text')
 

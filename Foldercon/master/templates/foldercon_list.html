@@ -1,3 +1,4 @@
+<!--master/templates/foldercon_list.html-->
 {% load static %}
 
 <html lang="en" dir="ltr">
@@ -6,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>FolderCon</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-100">
 
@@ -58,11 +60,6 @@
                     <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
             </a>
-
-
-
-
-
 
             <!-- YouTube -->
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-red-600">
@@ -122,36 +119,67 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {% for folder in foldercons %}
         <div class="relative group w-full aspect-[4/3] overflow-hidden rounded-lg">
-            {% if folder.webp %}
-                <img src="{{ folder.webp.url }}" alt="{{ folder.title }}"
-                     class="w-full h-full object-cover transition-all duration-300 group-hover:brightness-50" />
-            {% elif folder.png %}
-                <img src="{{ folder.png.url }}" alt="{{ folder.title }}"
-                     class="w-full h-full object-cover transition-all duration-300 group-hover:brightness-50" />
-            {% else %}
-                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600">
-                    No Image
-                </div>
-            {% endif %}
-
-            <!-- hover -->
-            <div class="absolute inset-0 bg-black hover:bg-opacity-50 text-black font-mono text-xs sm:text-sm grid grid-rows-3 grid-cols-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h3 class="col-span-2 text-white font-bold border-b border-white flex items-center justify-center text-center font-mono text-base">{{ folder.title }}</h3>
-                    <a href="{{ folder.ico.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-r border-white hover:bg-black">.ico</a>
-                    <a href="{{ folder.png.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-b border-white hover:bg-black">.png</a>
-                    <a href="{{ folder.icns.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-t border-white hover:bg-black">.icns</a>
-                    <a href="{{ folder.zip.url }}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-l border-white  hover:bg-black">.rar</a>
-            </div>
-
+    {% if folder.webp %}
+        <img src="{{ folder.webp.url }}" alt="{{ folder.title }}"
+             class="w-full h-full object-cover transition-all duration-300 group-hover:brightness-50" />
+    {% elif folder.png %}
+        <img src="{{ folder.png.url }}" alt="{{ folder.title }}"
+             class="w-full h-full object-cover transition-all duration-300 group-hover:brightness-50" />
+    {% else %}
+        <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600">
+            No Image
         </div>
-                {% empty %}
-                <p class="text-gray-700">Not found! Do you want to request it for us or add it yourself?</p>
-                {% endfor %}
+    {% endif %}
+
+        <div class="absolute inset-0 bg-black hover:bg-opacity-50 text-black font-mono text-xs sm:text-sm grid grid-rows-3 grid-cols-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <h3 class="col-span-2 text-white font-bold border-b border-white flex items-center justify-center text-center font-mono text-base">{{ folder.title }}</h3>
+            <a href="{% url 'download_folder_file' folder.pk 'zip' %}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-r border-white hover:bg-black">foldercon</a>
+            <a href="{% url 'download_folder_file' folder.pk 'ico' %}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-b border-white hover:bg-black">.ico</a>
+            <a href="{% url 'download_folder_file' folder.pk 'png' %}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-t border-white hover:bg-black">.png</a>
+            <a href="{% url 'download_folder_file' folder.pk 'icns' %}" class="text-white bg-sky-800 bg-opacity-60 hover:bg-opacity-90 py-2 flex items-center justify-center text-center font-mono text-base border-l border-white hover:bg-black">.icns</a>
+            <h3 class="text-white font-bold border-t border-white flex items-center justify-center text-center font-mono text-base">@{{ folder.user }}</h3>
+            <p class="text-white font-bold border-t border-white flex items-center justify-center text-center font-mono text-base">{{ folder.total_downloads }}</p>
+            <div
+                  id="warning-icon-{{ folder.pk }}"
+                  class="absolute top-2 right-2 cursor-pointer text-red-600 text-xl select-none z-10"
+                  title="report issue"
+                  data-warning-title=""
+                  data-warning-text=""
+                  style="pointer-events:auto; font-size: 2rem;"
+                >
+                  &#9888;
+            </div>
+            </div>
+        </div>
+
+            {% empty %}
+            <p class="text-gray-700">Not found!</p>
+            {% endfor %}
     </div>
     </main>
 
+</div>
+<!-- Modal -->
+<div id="warning-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-lg max-w-md w-full p-6 relative">
+    <h2 class="text-xl font-bold mb-4" id="modal-title">Report Issue</h2>
+    <form id="warning-form">
+        {% csrf_token %}
+      <input type="hidden" name="report_file_id" id="report-file-id" />
+      <label class="block mb-2 font-semibold">Title:</label>
+      <input type="text" name="title" id="warning-title" class="w-full border p-2 mb-4 rounded" />
+      <label class="block mb-2 font-semibold">Problem text:</label>
+      <textarea name="issue_text" id="warning-text" class="w-full border p-2 rounded" rows="5"></textarea>
+      <div class="mt-4 flex justify-end gap-4">
+        <button type="button" id="modal-close" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Nevermind</button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">send</button>
+      </div>
+    </form>
+  </div>
+</div>
 <!-- JavaScript -->
 <script src="{% static 'js/foldercon_main.js' %}"></script>
-</div>
+
+
 </body>
 </html>
